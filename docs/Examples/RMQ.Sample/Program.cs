@@ -59,7 +59,7 @@ ITranscoder transcoder = new Transcoder();
 IConsumer consumer = await connection.ConsumerBuilder().Queue(queueName).InitialCredits(100).MessageHandler(async (context, message) =>
 {
     Interlocked.Increment(ref messagesReceived);
-    await transcoder.TranscodeAsync(message.BodyAsString()).ConfigureAwait(true); ;
+    await transcoder.TranscodeAsync(message.BodyAsString());
     context.Accept();
 }
 ).BuildAndStartAsync();
