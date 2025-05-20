@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using RabbitMQ.AMQP.Client;
 
 namespace RMQ.Consumer
 {
@@ -9,10 +10,11 @@ namespace RMQ.Consumer
         {
         }
 
-        public async Task TranscodeAsync(string messageText)
+        public async Task TranscodeAsync(string messageText, IContext context)
         {
             await DoTranscodeAsync(1000, "Transcode 1", messageText);
             await DoTranscodeAsync(2000, "Transcode 2", messageText);
+            context.Accept();
         }
 
         private async Task DoTranscodeAsync(int milliseconds, string taskName, string messageText)

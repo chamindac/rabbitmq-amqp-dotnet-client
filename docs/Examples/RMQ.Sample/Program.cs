@@ -56,12 +56,16 @@ const string queueName = "generatepreview-videogenerator";
 
 ITranscoder transcoder = new Transcoder();
 
-IConsumer consumer = await connection.ConsumerBuilder().Queue(queueName).InitialCredits(100).MessageHandler(async (context, message) =>
-{
-    Interlocked.Increment(ref messagesReceived);
-    await transcoder.TranscodeAsync(message.BodyAsString());
-    context.Accept();
-}
+IConsumer consumer = await connection
+    .ConsumerBuilder()
+    .Queue(queueName)
+    .InitialCredits(5)
+    .MessageHandler(async (context, message) =>
+    {
+        Interlocked.Increment(ref messagesReceived);
+        _ = transcoder.TranscodeAsync(message.BodyAsString(), context);
+        await Task.CompletedTask;
+    }
 ).BuildAndStartAsync();
 
 consumer.ChangeState += (sender, fromState, toState, e) =>
@@ -81,3 +85,4 @@ connection.Dispose();
 
 printStats.Dispose();
 Trace.WriteLine(TraceLevel.Information, "Closed");
+
